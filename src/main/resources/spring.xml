@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+   
+   <context:component-scan base-package="main.java.com.xworkz.modules"></context:component-scan>
+   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" id="internalResourceViewResolver">
+   <property name="prefix" value="/"/>
+   <property name="suffix" value=".jsp"></property>
+   </bean>
+   
+     <bean class="org.springframework.orm.hibernate5.LocalSessionFactoryBean" id="localSessionFactoryBean">
+     <property name="configLocation" value="WEB-INF/classes/hibernate.cfg.xml"></property>
+	  <property name="dataSource" ref="driverManagerDataSource"></property>
+	</bean>
+   
+
+ <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" id="driverManagerDataSource">
+	<property name="driverClassName" value="${dataSource.driver}" />
+		<property name="url" value="${dataSource.url}"></property>
+		<property name="username" value="${dataSource.username}"></property>
+		<property name="password" value="${dataSource.password}"></property>
+	</bean> 
+   
+   <bean class="main.java.com.xworkz.modules.dao.TempleDAOImpl" id="templeDAOImpl">
+   <property name="factory" ref="localSessionFactoryBean"></property> 
+   </bean>
+   
+   <bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+		id="propertyPlaceholderConfigurer">
+		<property name="location" value="WEB-INF/classes/spring.properties"></property>
+	</bean>
+   
+</beans>
