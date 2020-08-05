@@ -9,10 +9,10 @@
 <!-- 		<property name="hibernate.connection.username">root</property> -->
 <!-- 		<property name="show_sql">true</property> -->
 <!-- 		<property name="hibernate.connection.password">xworkz</property> -->
-<!-- 			<property name="hbm2ddl.auto">update</property> -->
+<!-- 			<property name="hbm2ddl.auto">create</property> -->
 			<property name="show_sql">true</property>
 		 <mapping class="main.java.com.xworkz.modules.entity.TempleEntity"/>
-		 <!-- <mapping class="com.xowrkz.hibernate_onetoone_mapping.Laptop"/> -->
-					
+		 <mapping class="main.java.com.xworkz.modules.entity.PersonalInfoEntity"/>
+			<mapping class="main.java.com.xworkz.modules.entity.VisitingInfoEntity"/>		
 	</session-factory>
 </hibernate-configuration>

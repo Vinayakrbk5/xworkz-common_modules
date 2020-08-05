@@ -1,18 +1,18 @@
 package main.java.com.xworkz.modules.entity;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-
-import org.apache.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="APP_PROP_TABLE")
+@NamedQueries({@NamedQuery(name="fetchByType", query = "select temple from TempleEntity temple where type=:type")})
 public class TempleEntity implements Serializable{
 
 	private static final long serialVersionUID = 1L;
