@@ -29,7 +29,7 @@ public class EmailServiceImpl implements EmailService{
 			sb.append("<h1>Thank you for Selecting Services</h1>");
 			sb.append("<h3> Visit Again </h3></body></html>");
 			String str = new String(sb);
-			helper.setTo("vinayakbhilawadi@gmail.com");
+			helper.setTo(dto.getEmailId());
 			helper.setSubject("Temple Services Information");
 			helper.setText(str, true);
 			mailSender.send(mimeMessage);
