@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import main.java.com.xworkz.modules.dto.TempleDTO;
 import main.java.com.xworkz.modules.dto.TempleRegistrationDTO;
+import main.java.com.xworkz.modules.service.EmailService;
 import main.java.com.xworkz.modules.service.TempleService;
 
 @Component
@@ -22,6 +24,9 @@ public class TempleController {
 	private List<TempleDTO> ptList;
 	@Autowired
 	private TempleService service;
+
+	@Autowired
+	private EmailService emailService;
 
 	private Logger logger = Logger.getLogger(TempleController.class);
 
@@ -84,8 +89,9 @@ public class TempleController {
 				logger.info("data fetched from Excel data sheet is : ");
 				list.forEach(System.out::println);
 
-				// calling service method to save dto data fetched from excel sheet into DataBase
-	     	    // service.validateAndSave(list);
+				// calling service method to save dto data fetched from excel sheet into
+				// DataBase
+				// service.validateAndSave(list);
 
 				logger.info("End : processing onRegister() method in controller");
 				model.addAttribute("success", "Details sent to email Successfully");
@@ -98,6 +104,27 @@ public class TempleController {
 			logger.error("Some thing went wrong in onRegister() method in controller", e);
 		}
 		return null;
+	}
+
+	@RequestMapping(value = "request.do", method = RequestMethod.POST)
+	public String getVisitDetails(@RequestParam String email, Model model) {
+		logger.info("Invoked getVisitDetails() method from Controller");
+		logger.info("Start : processing getVisitDetails() from Controller");
+		TempleRegistrationDTO dto = new TempleRegistrationDTO();
+		dto = service.validateAndGetVisitDetailsByEmail(email);
+		if (dto != null) {
+			dto.setEmailId(email);
+			emailService.sendRegisterSuccessEmail(dto);
+			logger.info("Details sent to " + email + " successfully");
+			model.addAttribute("success", "Details sent to " + email + " successfully");
+
+		} else {
+			logger.info("You have not entered or entered wrong email");
+			model.addAttribute("fail", "You have not entered or entered wrong email");
+		}
+		logger.info("End : processing getVisitDetails() from Controller");
+		return "request";
+
 	}
 
 }

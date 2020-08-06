@@ -51,11 +51,11 @@ public class TempleServiceImpl implements TempleService {
 	public boolean validateAndSave(TempleRegistrationDTO dto) {
 		try {
 			logger.info("Start : validateAndSave() method in ServiceImpl");
-			
-			long emailCount = validateAndFetchEmailCount(dto.getEmailId());
+
+			long emailCount = 0;// validateAndFetchEmailCount(dto.getEmailId());
 			long phoneNumberCount = validateAndFetchPhoneNumberCount(dto.getMobileNumber());
-			
-			if (emailCount==0 && phoneNumberCount==0) {
+
+			if (emailCount == 0 && phoneNumberCount == 0) {
 				PersonalInfoEntity personEntity = new PersonalInfoEntity();
 				VisitingInfoEntity visitingEntity = new VisitingInfoEntity();
 				BeanUtils.copyProperties(dto, personEntity);
@@ -64,22 +64,19 @@ public class TempleServiceImpl implements TempleService {
 				logger.info("Visiting entity :" + visitingEntity);
 				personEntity.setEntity(visitingEntity);
 				visitingEntity.setPersonEntity(personEntity);
-				dao.save(personEntity, visitingEntity);
+//				dao.save(personEntity, visitingEntity);
 				logger.info("Now going to send details to email");
 				eService.sendRegisterSuccessEmail(dto);
 				logger.info("Sending to email is success");
 				logger.info("End : validateAndSave() method in ServiceImpl");
 				return true;
-			}
-			else
-			{
+			} else {
 				logger.info("EmailId or phone Number already Exists");
 				return false;
 			}
-			
-			
+
 		} catch (Exception e) {
-			logger.error("Something went wrong in validateAndSave() method in serviceImpl",e);
+			logger.error("Something went wrong in validateAndSave() method in serviceImpl", e);
 		}
 		return false;
 
@@ -99,7 +96,7 @@ public class TempleServiceImpl implements TempleService {
 				dao.save(visitingEntity, personEntity);
 			}
 		} catch (Exception e) {
-			logger.error("Something went wrong in validateAndSave(list) method in ServiceImpl",e);
+			logger.error("Something went wrong in validateAndSave(list) method in ServiceImpl", e);
 		}
 	}
 
@@ -155,7 +152,8 @@ public class TempleServiceImpl implements TempleService {
 			}
 
 		} catch (Exception e) {
-			logger.error("Something went wrong in validateAndFetchEmailCount() method in ServiceImpl");;
+			logger.error("Something went wrong in validateAndFetchEmailCount() method in ServiceImpl");
+			;
 		}
 		return 0;
 	}
@@ -176,6 +174,36 @@ public class TempleServiceImpl implements TempleService {
 			logger.error("Something went wrong in validateAndFetchPhoneNumberCount() method ServiceImpl");
 		}
 		return 0;
+	}
+
+	@Override
+	public TempleRegistrationDTO validateAndGetVisitDetailsByEmail(String email) {
+		logger.info("Invoked validateAndGetVisitDetailsByEmail() method from ServiceImpl");
+		logger.info("Start : processing validateAndGetVisitDetailsByEmail() from ServiceImpl");
+		TempleRegistrationDTO dto = new TempleRegistrationDTO();
+		VisitingInfoEntity vEntity = new VisitingInfoEntity();
+		try {
+			if (Objects.nonNull(email)&& !email.isEmpty()) {
+				logger.info("Email is valid");
+				vEntity = dao.fetchVisitDetailsByEmail(email);
+				if (vEntity != null) {
+					logger.info("Visiting entity is not null,so we can copy");
+					BeanUtils.copyProperties(vEntity, dto);
+				} else {
+					logger.info("Visiting entity is null,so we cannot copy");
+					dto=null;
+				}
+
+			} else {
+				logger.info("Email is not valid");
+				dto=null;
+			}
+			logger.info("End : processing validateAndGetVisitDetailsByEmail() from ServiceImpl");
+
+		} catch (Exception e) {
+			logger.error("Something went wrong in validateAndGetVisitDetailsByEmail() method in ServiceImpl",e);;
+		}
+		return dto;
 	}
 
 }

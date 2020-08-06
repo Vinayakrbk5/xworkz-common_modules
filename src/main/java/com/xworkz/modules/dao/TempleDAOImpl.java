@@ -145,5 +145,29 @@ public class TempleDAOImpl implements TempleDAO {
 		}
 		return 0;
 	}
+	
+	@Override
+	public VisitingInfoEntity fetchVisitDetailsByEmail(String email) {
+		logger.info("Invoked fetchVisitDetailsByEmail() method from DAOImpl");
+		logger.info("Start :  processing fetchVisitDetailsByEmail() from DAOImpl");
+		Session session=factory.openSession();
+		logger.info("Start : Session");
+		try {
+			String selectQuery="select visit from VisitingInfoEntity visit"
+					+ " where personid=(select personId from PersonalInfoEntity where emailId=:email)";
+			
+			Query query=session.createQuery(selectQuery);
+			query.setParameter("email", email);
+			VisitingInfoEntity vEntity=(VisitingInfoEntity) query.uniqueResult();
+			logger.info("End :  Session");
+			logger.info("End :  processing fetchVisitDetailsByEmail() from DAOImpl");
+			return vEntity;
+		}catch (Exception e) {
+			logger.error("Something went wrong in fetchVisitDetailsByEmail() method in DAOImpl", e);
+		}finally {
+			session.close();
+		}
+		return null;
+	}
 
 }

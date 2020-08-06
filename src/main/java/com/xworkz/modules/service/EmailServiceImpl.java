@@ -19,7 +19,7 @@ public class EmailServiceImpl implements EmailService{
 			MimeMessage mimeMessage = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 			StringBuffer sb = new StringBuffer("<html><body><h2>");
-			sb.append("Services Selected by " + dto.getName() + " is :</h2><table><tbody><big><tr>");
+			sb.append("Services Selected are :</h2><table><tbody><big><tr>");
 			sb.append("<td>No Of People : </td><td><b>" + dto.getNoOfPeople() + "</b></td><tr>");
 			sb.append("<td>ID Card Type : </td><td><b>" + dto.getIdCardType() + "</b></td><tr>");
 			sb.append("<td>Pooja Type : </td><td><b>" + dto.getPoojaType() + "</b></td><tr>");
@@ -29,7 +29,7 @@ public class EmailServiceImpl implements EmailService{
 			sb.append("<h1>Thank you for Selecting Services</h1>");
 			sb.append("<h3> Visit Again </h3></body></html>");
 			String str = new String(sb);
-			helper.setTo(dto.getEmailId());
+			helper.setTo("vinayakbhilawadi@gmail.com");
 			helper.setSubject("Temple Services Information");
 			helper.setText(str, true);
 			mailSender.send(mimeMessage);

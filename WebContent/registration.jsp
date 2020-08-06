@@ -217,6 +217,9 @@ top:25px;
 				<input type="reset" value="Cancel" id="but">
 			</div>
 		</form>
+		<form action="request.jsp" method="post">
+		<input type="submit" value="request details">
+		</form>
 		</div>
 </body>
 </html>

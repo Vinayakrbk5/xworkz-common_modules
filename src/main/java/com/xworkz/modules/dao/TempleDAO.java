@@ -18,5 +18,7 @@ public interface TempleDAO {
 	public long fetchEmailCount(String email);
 
 	public long fetchPhoneNumberCount(String phoneNumber);
+	
+	public VisitingInfoEntity fetchVisitDetailsByEmail(String email);
 
 }

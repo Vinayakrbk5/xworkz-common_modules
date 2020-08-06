@@ -22,5 +22,7 @@ public interface TempleService {
 	
 	public long validateAndFetchPhoneNumberCount(String phoneNumber);
 	
+	public TempleRegistrationDTO validateAndGetVisitDetailsByEmail(String email);
+	
 
 }
