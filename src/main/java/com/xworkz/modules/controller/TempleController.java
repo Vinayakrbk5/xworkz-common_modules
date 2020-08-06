@@ -65,7 +65,7 @@ public class TempleController {
 		return null;
 	}
 
-	@RequestMapping("/register.do")
+	@RequestMapping(value="/register.do",method = RequestMethod.POST)
 	public String onRegister(TempleRegistrationDTO dto, Model model, @RequestParam String file) {
 		try {
 			logger.info("Start : processing onRegister() method in controller");
