@@ -24,5 +24,9 @@ public interface TempleService {
 	
 	public TempleRegistrationDTO validateAndGetVisitDetailsByEmail(String email);
 	
-
+	public boolean validateAndfetchDetailsByEmailAndPasswod(String email,String password);
+	
+	public Boolean validateAndFetchPersonalDetailsByEmail(String email);
+	
+	public void validateAndUpdatePasswordByEmail(String password,String email);
 }

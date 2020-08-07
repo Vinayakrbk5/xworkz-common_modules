@@ -20,5 +20,11 @@ public interface TempleDAO {
 	public long fetchPhoneNumberCount(String phoneNumber);
 	
 	public VisitingInfoEntity fetchVisitDetailsByEmail(String email);
+	
+	public PersonalInfoEntity fetchDetailsByEmailAndPassword(String email,String password);
+	
+	public PersonalInfoEntity fetchPersonalDetailsByEmail(String email);
+	
+	public void updatePasswordByEmailId(String password,String emailId);
 
 }

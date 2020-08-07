@@ -15,7 +15,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name="PERSONAL_INFO_TABLE")
 @NamedQueries({@NamedQuery(name="fetchEmailCount",query = "select count(emailId) from PersonalInfoEntity where emailId=:email"),
-	@NamedQuery(name="fetchPhoneNumberCount",query = "select count(mobileNumber) from PersonalInfoEntity where mobileNumber=:phone")})
+	@NamedQuery(name="fetchPhoneNumberCount",query = "select count(mobileNumber) from PersonalInfoEntity where mobileNumber=:phone"),
+	@NamedQuery(name="fetchDetailsByEmailAndPassword",query = "select person from PersonalInfoEntity person where emailId=:email and password=:pass"),
+	@NamedQuery(name="fetchPersonalDetailsByEmail",query = "select person from PersonalInfoEntity person where emailId=:email"),
+	@NamedQuery(name="updatePasswordByEmailId",query = "update PersonalInfoEntity set password=:password where emailId=:email")})
 public class PersonalInfoEntity implements Serializable{
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -34,6 +37,8 @@ public class PersonalInfoEntity implements Serializable{
 	private String state;
 	@Column(name="PERSON_EMAIL")
 	private String emailId;
+	@Column(name="PASSWORD")
+	private String password;
 	@Column(name="VISITING_DATE")
 	private String date;
 	
@@ -96,8 +101,16 @@ public class PersonalInfoEntity implements Serializable{
 		return emailId;
 	}
 
-	public void setEmailId(String emailId) {
+	public void setEmailId(String emailId) {// password
 		this.emailId = emailId;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getDate() {

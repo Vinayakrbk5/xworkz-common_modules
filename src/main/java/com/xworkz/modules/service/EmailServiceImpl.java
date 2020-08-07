@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import main.java.com.xworkz.modules.dto.TempleRegistrationDTO;
 
 @Component
-public class EmailServiceImpl implements EmailService{
-	
+public class EmailServiceImpl implements EmailService {
+
 	@Autowired
 	private JavaMailSender mailSender;
 
@@ -37,6 +37,30 @@ public class EmailServiceImpl implements EmailService{
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public void sendingNewPasswordToEmail(String password, String email) {
+		System.out.println("Invoked sendingNewPasswordToEmail() method from EmailServiceImpl");
+		try {
+			MimeMessage mimeMessage = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
+			StringBuilder sb = new StringBuilder("<html><body>");
+			sb.append("<table><tbody>");
+			sb.append("<tr><td> Email Id :</td><td> <b>" + email + "</b></td></tr>");
+			sb.append("<tr><td> New Password : </td><td> <b>" + password + "</td></tr>");
+			sb.append("</tbody></table>");
+			sb.append("</body></html>");
+			String str = sb.toString();// new String(sb);
+			helper.setTo(email);
+			helper.setSubject("password reset message");
+			helper.setText(str, true);
+			mailSender.send(mimeMessage);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
 	}
 
 }

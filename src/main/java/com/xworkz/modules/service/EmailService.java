@@ -5,4 +5,6 @@ import main.java.com.xworkz.modules.dto.TempleRegistrationDTO;
 public interface EmailService {
 
 	public void sendRegisterSuccessEmail(TempleRegistrationDTO dto);
+	
+	public void sendingNewPasswordToEmail(String password,String email);
 }

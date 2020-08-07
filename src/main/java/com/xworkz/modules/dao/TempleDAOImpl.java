@@ -94,7 +94,7 @@ public class TempleDAOImpl implements TempleDAO {
 			logger.info("End : Save() method in DAOImpl");
 		} catch (Exception e) {
 			session.getTransaction().rollback();
-			logger.error("Something went wrong in save() method in DAOImpl",e);
+			logger.error("Something went wrong in save() method in DAOImpl", e);
 		} finally {
 			session.close();
 		}
@@ -105,19 +105,19 @@ public class TempleDAOImpl implements TempleDAO {
 	public long fetchEmailCount(String email) {
 		logger.info("Invoked fetchEmailCount() method from DAOImpl");
 		logger.info("Start : fetchEmailCount() method in DAOImpl");
-		Session session=factory.openSession();
+		Session session = factory.openSession();
 		try {
 			logger.info("Start : Session");
-			Query query=session.getNamedQuery("fetchEmailCount");
+			Query query = session.getNamedQuery("fetchEmailCount");
 			query.setParameter("email", email);
-			long emailCount=(long) query.uniqueResult();
-			logger.info("Email Count ="+emailCount);
+			long emailCount = (long) query.uniqueResult();
+			logger.info("Email Count =" + emailCount);
 			logger.info("End : Session");
 			logger.info("End : fetchEmailCount() method in DAOImpl");
 			return emailCount;
-		}catch (Exception e) {
-			logger.error("Something went wrong in fetchEmailCount() method in DAOImpl",e);
-		}finally {
+		} catch (Exception e) {
+			logger.error("Something went wrong in fetchEmailCount() method in DAOImpl", e);
+		} finally {
 			session.close();
 		}
 		return 0;
@@ -127,47 +127,133 @@ public class TempleDAOImpl implements TempleDAO {
 	public long fetchPhoneNumberCount(String phoneNumber) {
 		logger.info("Invoked fetchPhoneNumberCount() method from DAOImpl");
 		logger.info("Start : fetchPhoneNumberCount() method in DAOImpl");
-		Session session=factory.openSession();
+		Session session = factory.openSession();
 		try {
 			logger.info("Start : Session");
-			Query query=session.getNamedQuery("fetchPhoneNumberCount");
+			Query query = session.getNamedQuery("fetchPhoneNumberCount");
 			query.setParameter("phone", phoneNumber);
-			long numberCount=(long) query.uniqueResult();
-			logger.info("PhoneNumber Count = "+numberCount);
+			long numberCount = (long) query.uniqueResult();
+			logger.info("PhoneNumber Count = " + numberCount);
 			logger.info("End : Session");
 			logger.info("End : fetchPhoneNumberCount() method in DAOImpl");
 			return numberCount;
-			
-		}catch (Exception e) {
-			logger.error("Something went wrong in fetchPhoneNumberCount() method in DAOImpl",e);
-		}finally {
+
+		} catch (Exception e) {
+			logger.error("Something went wrong in fetchPhoneNumberCount() method in DAOImpl", e);
+		} finally {
 			session.close();
 		}
 		return 0;
 	}
-	
+
 	@Override
 	public VisitingInfoEntity fetchVisitDetailsByEmail(String email) {
 		logger.info("Invoked fetchVisitDetailsByEmail() method from DAOImpl");
 		logger.info("Start :  processing fetchVisitDetailsByEmail() from DAOImpl");
-		Session session=factory.openSession();
+		Session session = factory.openSession();
 		logger.info("Start : Session");
 		try {
-			String selectQuery="select visit from VisitingInfoEntity visit"
+			String selectQuery = "select visit from VisitingInfoEntity visit"
 					+ " where personid=(select personId from PersonalInfoEntity where emailId=:email)";
-			
-			Query query=session.createQuery(selectQuery);
+
+			Query query = session.createQuery(selectQuery);
 			query.setParameter("email", email);
-			VisitingInfoEntity vEntity=(VisitingInfoEntity) query.uniqueResult();
+			VisitingInfoEntity vEntity = (VisitingInfoEntity) query.uniqueResult();
 			logger.info("End :  Session");
 			logger.info("End :  processing fetchVisitDetailsByEmail() from DAOImpl");
 			return vEntity;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Something went wrong in fetchVisitDetailsByEmail() method in DAOImpl", e);
-		}finally {
+		} finally {
 			session.close();
 		}
 		return null;
+	}
+
+	@Override
+	public PersonalInfoEntity fetchDetailsByEmailAndPassword(String email, String password) {
+		logger.info("Invoked fetchDetailsByEmailAndPassword() method from DAOImpl");
+		logger.info("Start : processing fetchDetailsByEmailAndPassword()");
+		Session session = factory.openSession();
+		session.beginTransaction();
+		try {
+			logger.info("Start : Session");
+//			String hqlQuery = "select person from PersonalInfoEntity person where emailId=:email and password=:pass";
+//			Query query = session.createQuery(hqlQuery);
+			Query query = session.getNamedQuery("fetchDetailsByEmailAndPassword");
+			query.setParameter("email", email);
+			query.setParameter("pass", password);
+			PersonalInfoEntity pEntity = (PersonalInfoEntity) query.uniqueResult();
+			logger.info("End : session");
+			logger.info("Start : processing fetchDetailsByEmailAndPassword()");
+			return pEntity;
+
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			logger.error("Some thing went wrong in fetchDetailsByEmailAndPassword() method in DAOImpl", e);
+		} finally {
+			session.close();
+		}
+		return null;
+	}
+
+	@Override
+	public PersonalInfoEntity fetchPersonalDetailsByEmail(String email) {
+		logger.info("Invoked fetchPersonalDetailsByEmail() method from DAOImpl");
+		logger.info("Start : processing fetchPersonalDetailsByEmail()");
+		Session session = factory.openSession();
+		session.beginTransaction();
+		PersonalInfoEntity pEntity = new PersonalInfoEntity();
+		try {
+			logger.info("Start :Session");
+//			String hqlQuery = "select person from PersonalInfoEntity person where emailId=:email";
+//			Query query = session.createQuery(hqlQuery);
+			Query query = session.getNamedQuery("fetchPersonalDetailsByEmail");
+			query.setParameter("email", email);
+			pEntity = (PersonalInfoEntity) query.uniqueResult();
+			logger.info("End :Session");
+			logger.info("End : processing fetchPersonalDetailsByEmail()");
+			return pEntity;
+
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			logger.error("Some thing went wrong in fetchPersonalDetailsByEmail() from DAOImpl()");
+		} finally {
+			session.close();
+		}
+		return null;
+	}
+
+	@Override
+	public void updatePasswordByEmailId(String password, String emailId) {
+		logger.info("Invoked updatePasswordByEmailId() method from DAOImpl");
+		logger.info("Start : Processing updatePasswordByEmailId()");
+		Session session = factory.openSession();
+		session.beginTransaction();
+		try {
+			logger.info("Start : Session");
+//			String hqlQuery = "update PersonalInfoEntity set password=:password where emailId=:email";
+//			Query query = session.createQuery(hqlQuery);
+			Query query = session.getNamedQuery("updatePasswordByEmailId");
+			query.setParameter("password", password);
+			query.setParameter("email", emailId);
+			int res = query.executeUpdate();
+			session.getTransaction().commit();
+			if (res > 0) {
+				logger.info("Password is updated ");
+			} else {
+				logger.info("Password is not updated");
+			}
+			logger.info("End : Session");
+			logger.info("Start : Processing updatePasswordByEmailId()");
+
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			logger.error("Something went wrong in updatePasswordByEmailId() in DAOImpl", e);
+		} finally {
+			session.close();
+		}
+
 	}
 
 }

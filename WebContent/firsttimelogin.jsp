@@ -7,11 +7,6 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <style>
-  input[type="email"]{
-  width:30%;
-  }
-  </style>
 </head>
 <body class="bg-success">
 
@@ -27,21 +22,19 @@
     </ul>
   </div>
 </nav>
-<div class="container">
-<h2>${success}</h2>
-<h2> ${fail}</h2>
-<form action="request.do" method="post">
 
-<div class="form-group">
-     	 	<label for="email">Enter Email to receive Details: </label>
-     		 <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
-   			 </div>
-<!-- <label for="em">Enter Email to receive Details: </label> -->
-<!-- <input type="email" name="email" placeholder="enter email" id="em"> -->
-<!-- <div class="bg-success"> -->
-<button type="submit" class="btn btn-success">Request</button>
-<!-- </div> -->
-</form>
+<h3>${password }</h3>
+<h3>${wrong }</h3>
+
+<div class="container">
+  <form class="form-inline" action="generate.do" method="post">
+    <div class="form-group">
+      <label for="email">Enter Email:</label>
+      <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+    </div>
+    <button type="submit" class="btn btn-success">generate password</button>
+  </form>
 </div>
+
 </body>
 </html>

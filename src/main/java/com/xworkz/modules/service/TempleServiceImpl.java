@@ -64,9 +64,9 @@ public class TempleServiceImpl implements TempleService {
 				logger.info("Visiting entity :" + visitingEntity);
 				personEntity.setEntity(visitingEntity);
 				visitingEntity.setPersonEntity(personEntity);
-//				dao.save(personEntity, visitingEntity);
+				dao.save(personEntity, visitingEntity);
 				logger.info("Now going to send details to email");
-				eService.sendRegisterSuccessEmail(dto);
+//				eService.sendRegisterSuccessEmail(dto);
 				logger.info("Sending to email is success");
 				logger.info("End : validateAndSave() method in ServiceImpl");
 				return true;
@@ -183,7 +183,7 @@ public class TempleServiceImpl implements TempleService {
 		TempleRegistrationDTO dto = new TempleRegistrationDTO();
 		VisitingInfoEntity vEntity = new VisitingInfoEntity();
 		try {
-			if (Objects.nonNull(email)&& !email.isEmpty()) {
+			if (Objects.nonNull(email) && !email.isEmpty()) {
 				logger.info("Email is valid");
 				vEntity = dao.fetchVisitDetailsByEmail(email);
 				if (vEntity != null) {
@@ -191,19 +191,87 @@ public class TempleServiceImpl implements TempleService {
 					BeanUtils.copyProperties(vEntity, dto);
 				} else {
 					logger.info("Visiting entity is null,so we cannot copy");
-					dto=null;
+					dto = null;
 				}
 
 			} else {
 				logger.info("Email is not valid");
-				dto=null;
+				dto = null;
 			}
 			logger.info("End : processing validateAndGetVisitDetailsByEmail() from ServiceImpl");
 
 		} catch (Exception e) {
-			logger.error("Something went wrong in validateAndGetVisitDetailsByEmail() method in ServiceImpl",e);;
+			logger.error("Something went wrong in validateAndGetVisitDetailsByEmail() method in ServiceImpl", e);
+			;
 		}
 		return dto;
+	}
+
+	@Override
+	public boolean validateAndfetchDetailsByEmailAndPasswod(String email, String password) {
+		Boolean valid = false;
+		try {
+			PersonalInfoEntity pEntity = new PersonalInfoEntity();
+			if (Objects.nonNull(email) && !email.isEmpty() && Objects.nonNull(password) && !password.isEmpty()) {
+				logger.info("Both password and email are valid");
+				pEntity = dao.fetchDetailsByEmailAndPassword(email, password);
+				if (pEntity != null) {
+					logger.info("Object is not null, so ypu can login");
+					valid = true;
+				} else {
+					logger.info("Object is not null, so you cannot login");
+				}
+
+			} else {
+				logger.info("wrong Email or password");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return valid;
+	}
+
+	@Override
+	public Boolean validateAndFetchPersonalDetailsByEmail(String email) {
+		logger.info("Invoked validateAndFetchPersonalDetailsByEmail() method from ServiceImpl");
+		logger.info("Start : processing validateAndFetchPersonalDetailsByEmail()");
+		PersonalInfoEntity pEntity = new PersonalInfoEntity();
+		boolean valid = false;
+		try {
+			pEntity = dao.fetchPersonalDetailsByEmail(email);
+			if (Objects.nonNull(pEntity) && pEntity.getPassword() == null) {
+				logger.info("Object is not null or password doesnot exists");
+				valid = true;
+			}
+			logger.info("End : processing validateAndFetchPersonalDetailsByEmail()");
+		} catch (Exception e) {
+			logger.error("Something went wrong in validateAndFetchPersonalDetailsByEmail() in ServiceImpl",e);
+		}
+		return valid;
+	}
+
+	@Override
+	public void validateAndUpdatePasswordByEmail(String password, String email) {
+		logger.info("Invoked validateAndUpdatePasswordByEmail() method from ServiceImpl");
+		logger.info("Start : Processing validateAndUpdatePasswordByEmail()");
+		try {
+			if (email != null && !email.isEmpty()) {
+				logger.info("Email is valid");
+				if (password != null && !password.isEmpty()) {
+					logger.info("Password is not null");
+					dao.updatePasswordByEmailId(password, email);
+				} else {
+					logger.info("Password is null");
+				}
+			} else {
+				logger.info("email is null");
+			}
+
+			logger.info("End : Processing validateAndUpdatePasswordByEmail()");
+		} catch (Exception e) {
+			logger.error("Something went wrong in validateAndUpdatePasswordByEmail() in ServiceImpl");
+		}
+
 	}
 
 }

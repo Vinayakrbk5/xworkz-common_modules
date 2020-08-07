@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import main.java.com.xworkz.modules.dto.TempleDTO;
 import main.java.com.xworkz.modules.dto.TempleRegistrationDTO;
+import main.java.com.xworkz.modules.passwordgenerator.RandomPasswordGenerator;
 import main.java.com.xworkz.modules.service.EmailService;
 import main.java.com.xworkz.modules.service.TempleService;
 
@@ -27,6 +28,8 @@ public class TempleController {
 
 	@Autowired
 	private EmailService emailService;
+	@Autowired
+	private RandomPasswordGenerator passwordGenerator;
 
 	private Logger logger = Logger.getLogger(TempleController.class);
 
@@ -65,7 +68,7 @@ public class TempleController {
 		return null;
 	}
 
-	@RequestMapping(value="/register.do",method = RequestMethod.POST)
+	@RequestMapping(value = "/register.do", method = RequestMethod.POST)
 	public String onRegister(TempleRegistrationDTO dto, Model model, @RequestParam String file) {
 		try {
 			logger.info("Start : processing onRegister() method in controller");
@@ -81,17 +84,17 @@ public class TempleController {
 				logger.info("File recieved from UI is : \"" + file + "\"");
 
 				// saving data into Excel Sheet
-				service.validateAndSaveIntoExcel(dto, file);
+//				service.validateAndSaveIntoExcel(dto, file);
 
 				// reading data from Excel Sheet
-				List<TempleRegistrationDTO> list = service.validateAndThenToDtoConvertion(file);
+//				List<TempleRegistrationDTO> list = service.validateAndThenToDtoConvertion(file);
 
 				logger.info("data fetched from Excel data sheet is : ");
-				list.forEach(System.out::println);
+//				list.forEach(System.out::println);
 
 				// calling service method to save dto data fetched from excel sheet into
 				// DataBase
-				// service.validateAndSave(list);
+//				 service.validateAndSave(list);
 
 				logger.info("End : processing onRegister() method in controller");
 				model.addAttribute("success", "Details sent to email Successfully");
@@ -114,7 +117,7 @@ public class TempleController {
 		dto = service.validateAndGetVisitDetailsByEmail(email);
 		if (dto != null) {
 			dto.setEmailId(email);
-			emailService.sendRegisterSuccessEmail(dto);
+//			emailService.sendRegisterSuccessEmail(dto);
 			logger.info("Details sent to " + email + " successfully");
 			model.addAttribute("success", "Details sent to " + email + " successfully");
 
@@ -125,6 +128,55 @@ public class TempleController {
 		logger.info("End : processing getVisitDetails() from Controller");
 		return "request";
 
+	}
+
+	@RequestMapping(value = "login.do", method = RequestMethod.POST)
+	public String loginCheck(@RequestParam String email, @RequestParam String pwd, Model model) {
+		try {
+			Boolean check = false;
+			check = service.validateAndfetchDetailsByEmailAndPasswod(email, pwd);
+			if (check) {
+				logger.info("You have logged in successfully");
+				return "successlogin";
+			} else {
+				logger.info("wrong email or password");
+				model.addAttribute("wrong", "email or password not matching");
+				return "loginpage";
+			}
+		} catch (Exception e) {
+			logger.info("Something went wrong in loginCheck() from Controller", e);
+			;
+		}
+		return null;
+	}
+
+	@RequestMapping(value = "generate.do", method = RequestMethod.POST)
+	public String checkingPasswordExistance(@RequestParam String email, Model model) {
+		logger.info("Invoked checkingPasswordExistance() method from Controller");
+		try {
+			Boolean check = false;
+			check = service.validateAndFetchPersonalDetailsByEmail(email);
+			if (check) {
+				// generating new password
+				String newPassword = passwordGenerator.generatePassword(8);
+				logger.info("New password is : " + newPassword);
+				// calling service to update password from PersonalInfoEntity
+				service.validateAndUpdatePasswordByEmail(newPassword, email);
+
+				// sending reset password to give email
+				emailService.sendingNewPasswordToEmail(newPassword, email);
+				logger.info("new password is sent to " + email + " successfully");
+				model.addAttribute("password", "new password is sent to " + email + " successfully");
+
+			} else {
+				logger.info(email + "is not matching, please enter right email");
+				model.addAttribute("wrong", email + "is not matching or password already exists");
+			}
+		} catch (Exception e) {
+			logger.error("something went wrong in checkingPasswordExistance() in Controller", e);
+		}
+
+		return "firsttimelogin";
 	}
 
 }

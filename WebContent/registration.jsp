@@ -1,225 +1,162 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+<%-- <%@ page language="java" contentType="text/html; charset=ISO-8859-1" --%>
+<%-- 	pageEncoding="ISO-8859-1"%> --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="ISO-8859-1">
-<title>Registration-Form</title>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <style>
-input[type=text], select {
-	width: 30%;
-	padding: 12px 20px;
-	margin: 8px 0;
-	display: inline-block;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	box-sizing: border-box;
-}
-
-input[type=submit] {
-	
-	background-color: #4CAF50;
-	color: white;
-	padding: 14px 20px;
-	margin: 6px 0;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-}
-
-
-input[type=reset] {
-	width: 100%;
-	background-color: rgba(255, 0, 0, 0.7);
-	color: white;
-	padding: 14px 20px;
-	margin: 8px 0;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-}
-
-input[type=number] {
-	width: 10%;
-	color: black;
-	padding: 14px 20px;
-	margin: 8px 0;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-}
-
-input[type=submit]:hover {
-	background-color: #45a049;
-}
-
-div {
-	border-radius: 5px;
-	background-color: #f2f2f2;
-	padding: 50px;
-}
-#but {
-	width: 15%;
-}
-
-#sel{
-margin-left:5%;
+input[type=text],[type=email]{
 width:20%;
 }
 
-span.name{
-position:relative;
-left:100px;
+input[type=number]{
+width:10%;
 }
 
-span.mobile{
-position:relative;
-left:300px;
+#row{
+width:50%;
+}
+#sel{
+width:20%;
 }
 
-span.area{
-position:relative;
-left:100px;
-top:20px;
-}
-
-span.age{
-position:relative;
-left:300px;
-bottom:10px;
-}
-
-span.state{
-position:relative;
-left:100px;
-top:40px;
-}
-span.email{
-position:relative;
-left:300px;
-top:40px;
-}
-
-span.date{
-position:relative;
-left:150px;
-top:20px;
-}
-span.num{
-position:relative;
-left:100px;
-}
-
-span.entry{
-position:relative;
-left:100px;
-}
-span.prasad{
-position:relative;
-left:150px;
-}
-span.id{
-position:relative;
-left:140px;
-}
-span.pooja{
-position:relative;
-left:120px;
-}
-label{
-position:relative;
-left:100px;
-}
-label.date{
-position:relative;
-left:100px;
-top:25px;
-}
-
-span.file{
-position:relative;
-left:220px;
-top:25px;
-}
-label.id{
-position:relative;
-left:100px;
-top:25px;
+input[type=file],[type=date]{
+width:20%;
 }
 
 </style>
 </head>
-<body>
+<body class="bg-success">
+<div class="container">
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">XWorkz</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li><a href="registration.jsp">register</a></li>
+      <li><a href="request.jsp">resend</a></li>
+      <li><a href="loginpage.jsp">login</a></li>
+    </ul>
+  </div>
+</nav>
+
 
 <h3 style="background: black; color: white; padding: 20px; font-size: 30px">Temple Registration Form</h3>
 <h3>${unsuccess}</h3>
 	<div>
 	<h2>Personal Information</h2>
 		<form action="register.do" method="post">
-			<span class="name">
-			<input type="text" name="name" placeholder="enter name"></span>
+		<div class="form-inline">
+			<div class="form-group">
+     	 	<label for="name">Name:</label>
+     		 <input type="text" class="form-control" id="name" placeholder="Enter name" name="name">
+   			 </div>
+
+			<div class="form-group" style="margin-left:40%">
+     	 	<label for="mobile">Mobile Number:</label>
+     		 <input type="text" class="form-control" id="mobile" placeholder="Enter mobile number" name="mobileNumber">
+   			 </div>
+			</div>
 			
-			<span class="mobile">
-			<input type="text" name="mobileNumber" placeholder="enter mobile number"></span><br>
+			<br>
+			<div class="form-group">
+     	 	<label for="mobile">Address:</label>
+     		 <textarea rows="5" cols="20"  id="row" class="form-control" name="address" placeholder="enter address here"></textarea>
+   			 </div>
 			
-			<span class="area">
-			<textarea rows="5" cols="50" name="address" placeholder="enter address here"></textarea></span>
+			 <div class="form-inline">
+			 <div class="form-group">
+     	 	<label for="age">Age:</label>
+     		 <input type="number" class="form-control" id="age" placeholder="Enter age" name="age">
+   			 </div>
 			 
-			<span class="age">
-			<input type="number" name="age" placeholder="enter age"></span><br>
-			<span class="state">
-			<input type="text" name="state" placeholder="enter state"></span>
+				
+				 <div class="form-group" style="margin-left:45%">
+     	 	<label for="state">State:</label>
+     		 <input type="text" class="form-control" id="state" placeholder="Enter state" name="state">
+   			 </div>
+				</div>
+				<br>
+			
+			<div class="form-inline">
+			 <div class="form-group">
+     	 	<label for="email">Email :</label>
+     		 <input type="email" class="form-control" id="email" placeholder="Enter email" name="emailId">
+   			 </div>
 			 
-			<span class="email">
-			<input type="text" name="emailId" placeholder="enter email"></span><br><br><br><br>
-			<label class="date">Select Date of Visiting :</label>
-			<span class="date"><input type="date" name="date" placeholder="select Date of Visiting"></span><br><br><br>
-			<hr>
+
+				<div class="form-group" style="margin-left:40%">
+     	 	<label for="date">Select Date :</label>
+     		 <input type="date" class="form-control" id="date" placeholder="select date" name="date">
+   			 </div>
+   			 </div>
+   			 
 			
 			<h2>Special Information</h2>
-			<span class="num"><input type="number" name="noOfPeople"
-				placeholder="enter no of people"></span>
-			<br>
 			
-			<label >Select Entrance Type : </label>	
-		<span class="entry"><select name="specialEntry" id="sel">
+			<div class="form-group">
+     	 	<label for="number">Enter Number Of People :</label>
+     		 <input type="number" class="form-control" id="number" placeholder="enter no of people" name="noOfPeople">
+   			 </div>
+			
+			
+			<div class="form-group">
+     	 	<label >Select Entrance Type : </label>	
+     		 <select name="specialEntry" id="sel" class="form-control">
 		<c:forEach var="selist" items="${selist}">
 			<option value="${selist.value}">${selist.name}</option>
 		</c:forEach>
-	</select></span>
-	<br>
-	<label >Select Prasad : </label>
-	<span class="prasad"><select name="prasad" id="sel">
+	</select>
+   			 </div>
+			
+	
+	<div class="form-group">
+     	 	<label >Select Prasad : </label>
+     		 <select name="prasad" id="sel" class="form-control">
 		<c:forEach var="prlist" items="${prlist}">
 			<option value="${prlist.value}">${prlist.name}</option>
 		</c:forEach>
-	</select></span>
-<br>
-   <label >Select ID Type : </label>
-	<span class="id"><select name="idCardType" id="sel">
+	</select>
+   			 </div>
+	
+		
+		<div class="form-group">
+     	 	<label >Select ID Type : </label>
+     		 <select name="idCardType" id="sel" class="form-control">
 		<c:forEach var="idlist" items="${idlist}">
 			<option value="${idlist.value}">${idlist.name}</option>
 		</c:forEach>
-	</select></span>
-<br>
-  <label >Select Pooja Type : </label>
-	<span class="pooja"><select name="poojaType" id="sel">
+	</select>
+   			 </div>
+
+<div class="form-group">
+     	 	<label >Select Pooja Type : </label>
+     		 <select name="poojaType" id="sel" class="form-control">
 		<c:forEach var="ptlist" items="${ptlist}">
 			<option value="${ptlist.value}">${ptlist.name}</option>
 		</c:forEach>
-	</select></span>
-	<br>
-	<label class="id">upload Files :</label><span class="file"> <input type="file" name="file" value="choose file"></span>
+	</select>
+   			 </div>
+
+	
+	<div class="form-group">
+     	 	<label class="file">upload Files :</label>
+     		 <input type="file" class="form-control" id="file" placeholder="choose file" name="file">
+   			 </div>
 
 			<div>
-				<input type="submit" value="Submit" id="but"> 
-				<input type="reset" value="Cancel" id="but">
+				<button type="submit" class="btn btn-success">Submit</button>
+				<button type="reset" class="btn btn-danger">Cancel</button>
 			</div>
-		</form>
-		<form action="request.jsp" method="post">
-		<input type="submit" value="request details">
-		</form>
+			</form>
+		</div>
 		</div>
 </body>
 </html>
