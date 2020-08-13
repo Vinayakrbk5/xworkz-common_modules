@@ -16,9 +16,11 @@
       <a class="navbar-brand" href="#">XWorkz</a>
     </div>
     <ul class="nav navbar-nav">
-      <li><a href="registration.jsp">register</a></li>
-      <li><a href="request.jsp">resend</a></li>
-      <li><a href="loginpage.jsp">login</a></li>
+     <li><a href="Registration.jsp">register</a></li>
+      <li><a href="Request.jsp">resend</a></li>
+      <li><a href="LoginPage.jsp">login</a></li>
+      <li><a href="FirstTimeLogin.jsp">first time login</a></li>
+      <li><a href="ResetPassword.jsp">reset password</a></li>
     </ul>
   </div>
 </nav>

@@ -53,15 +53,13 @@ public class TempleController {
 	public String onClick(Model model) {
 		try {
 			logger.info("Invoked onClick() method from controller");
-//			logger.info("Special Entrance :" + seList);
-//			logger.info("Prasad List : "+ prList);
 
 			model.addAttribute("selist", seList);
 			model.addAttribute("prlist", prList);
 			model.addAttribute("idlist", idList);
 			model.addAttribute("ptlist", ptList);
 
-			return "registration";
+			return "Registration";
 		} catch (Exception e) {
 			logger.error("Something went wrong in controller", e);
 		}
@@ -97,11 +95,11 @@ public class TempleController {
 //				 service.validateAndSave(list);
 
 				logger.info("End : processing onRegister() method in controller");
-				model.addAttribute("success", "Details sent to email Successfully");
-				return "success";
+				model.addAttribute("success", "You have registerd successfully and Details sent to email Successfully");
+				return "Registration";
 			} else {
 				model.addAttribute("unsuccess", "EmailId or Phone Number already Exists");
-				return "registration";
+				return "Registration";
 			}
 		} catch (Exception e) {
 			logger.error("Some thing went wrong in onRegister() method in controller", e);
@@ -117,7 +115,7 @@ public class TempleController {
 		dto = service.validateAndGetVisitDetailsByEmail(email);
 		if (dto != null) {
 			dto.setEmailId(email);
-//			emailService.sendRegisterSuccessEmail(dto);
+			emailService.sendRegisterSuccessEmail(dto);
 			logger.info("Details sent to " + email + " successfully");
 			model.addAttribute("success", "Details sent to " + email + " successfully");
 
@@ -126,28 +124,21 @@ public class TempleController {
 			model.addAttribute("fail", "You have not entered or entered wrong email");
 		}
 		logger.info("End : processing getVisitDetails() from Controller");
-		return "request";
+		return "Request";
 
 	}
 
 	@RequestMapping(value = "login.do", method = RequestMethod.POST)
 	public String loginCheck(@RequestParam String email, @RequestParam String pwd, Model model) {
 		try {
-			Boolean check = false;
+			String check = null;
 			check = service.validateAndfetchDetailsByEmailAndPasswod(email, pwd);
-			if (check) {
-				logger.info("You have logged in successfully");
-				return "successlogin";
-			} else {
-				logger.info("wrong email or password");
-				model.addAttribute("wrong", "email or password not matching");
-				return "loginpage";
-			}
+			model.addAttribute("logMessage", check);
+
 		} catch (Exception e) {
 			logger.info("Something went wrong in loginCheck() from Controller", e);
-			;
 		}
-		return null;
+		return "LoginPage";
 	}
 
 	@RequestMapping(value = "generate.do", method = RequestMethod.POST)
@@ -155,15 +146,19 @@ public class TempleController {
 		logger.info("Invoked checkingPasswordExistance() method from Controller");
 		try {
 			Boolean check = false;
+			// calling service to check whether password exist are not
 			check = service.validateAndFetchPersonalDetailsByEmail(email);
 			if (check) {
 				// generating new password
 				String newPassword = passwordGenerator.generatePassword(8);
 				logger.info("New password is : " + newPassword);
+
+				// Encrypted password
+
 				// calling service to update password from PersonalInfoEntity
 				service.validateAndUpdatePasswordByEmail(newPassword, email);
 
-				// sending reset password to give email
+				// sending reset password to given email
 				emailService.sendingNewPasswordToEmail(newPassword, email);
 				logger.info("new password is sent to " + email + " successfully");
 				model.addAttribute("password", "new password is sent to " + email + " successfully");
@@ -176,7 +171,7 @@ public class TempleController {
 			logger.error("something went wrong in checkingPasswordExistance() in Controller", e);
 		}
 
-		return "firsttimelogin";
+		return "FirstTimeLogin";
 	}
 
 }

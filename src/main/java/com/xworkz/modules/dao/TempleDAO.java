@@ -26,5 +26,11 @@ public interface TempleDAO {
 	public PersonalInfoEntity fetchPersonalDetailsByEmail(String email);
 	
 	public void updatePasswordByEmailId(String password,String emailId);
+	
+	public PersonalInfoEntity fetchByEmail(String email);
+	
+	public int fetchLoginCountByEmail(String email);
+	
+	public void updateLoginCountByEmail(String email, Integer count);
 
 }

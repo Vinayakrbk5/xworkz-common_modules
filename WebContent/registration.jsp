@@ -33,21 +33,23 @@ width:20%;
 </style>
 </head>
 <body class="bg-success">
-<div class="container">
+
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="#">XWorkz</a>
     </div>
     <ul class="nav navbar-nav">
-      <li><a href="registration.jsp">register</a></li>
-      <li><a href="request.jsp">resend</a></li>
-      <li><a href="loginpage.jsp">login</a></li>
+      <li><a href="Registration.jsp">register</a></li>
+      <li><a href="Request.jsp">resend</a></li>
+      <li><a href="LoginPage.jsp">login</a></li>
+      <li><a href="FirstTimeLogin.jsp">first time login</a></li>
+      <li><a href="ResetPassword.jsp">reset password</a></li>
     </ul>
   </div>
 </nav>
 
-
+<div class="container">
 <h3 style="background: black; color: white; padding: 20px; font-size: 30px">Temple Registration Form</h3>
 <h3>${unsuccess}</h3>
 	<div>

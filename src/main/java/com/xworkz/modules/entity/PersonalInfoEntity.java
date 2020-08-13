@@ -18,7 +18,10 @@ import javax.persistence.Table;
 	@NamedQuery(name="fetchPhoneNumberCount",query = "select count(mobileNumber) from PersonalInfoEntity where mobileNumber=:phone"),
 	@NamedQuery(name="fetchDetailsByEmailAndPassword",query = "select person from PersonalInfoEntity person where emailId=:email and password=:pass"),
 	@NamedQuery(name="fetchPersonalDetailsByEmail",query = "select person from PersonalInfoEntity person where emailId=:email"),
-	@NamedQuery(name="updatePasswordByEmailId",query = "update PersonalInfoEntity set password=:password where emailId=:email")})
+	@NamedQuery(name="updatePasswordByEmailId",query = "update PersonalInfoEntity set password=:password where emailId=:email"),
+	@NamedQuery(name="fetchByEmail",query = "select personal from PersonalInfoEntity personal where emailId=:email"),
+	@NamedQuery(name="fetchLoginCountByEmail",query = "select loginCount from PersonalInfoEntity where emailId=:email"),
+	@NamedQuery(name="updateLoginCountByEmail",query = "update PersonalInfoEntity set loginCount=:count where emailId=:email")})
 public class PersonalInfoEntity implements Serializable{
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -32,13 +35,15 @@ public class PersonalInfoEntity implements Serializable{
 	@Column(name="ADDRESS")
 	private String address;
 	@Column(name="PERSON_AGE")
-	private Double age;
+	private Integer age;
 	@Column(name="PERSON_STATE")
 	private String state;
 	@Column(name="PERSON_EMAIL")
 	private String emailId;
 	@Column(name="PASSWORD")
 	private String password;
+	@Column(name="LOGIN_COUNT")
+	private Integer loginCount;
 	@Column(name="VISITING_DATE")
 	private String date;
 	
@@ -81,14 +86,21 @@ public class PersonalInfoEntity implements Serializable{
 		this.address = address;
 	}
 
-	public Double getAge() {
+	public Integer getAge() {
 		return age;
 	}
 
-	public void setAge(Double age) {
+	public void setAge(Integer age) {
 		this.age = age;
 	}
 
+	public Integer getLoginCount() {
+		return loginCount;
+	}
+	public void setLoginCount(Integer loginCount) {
+		this.loginCount = loginCount;
+	}
+	
 	public String getState() {
 		return state;
 	}
@@ -132,9 +144,16 @@ public class PersonalInfoEntity implements Serializable{
 	@Override
 	public String toString() {
 		return "PersonalInfoEntity [personId=" + personId + ", name=" + name + ", mobileNumber=" + mobileNumber
-				+ ", address=" + address + ", age=" + age + ", state=" + state + ", emailId=" + emailId + ", date="
-				+ date + ", entity=" + entity + "]";
+				+ ", address=" + address + ", age=" + age + ", state=" + state + ", emailId=" + emailId + ", password="
+				+ password + ", loginCount=" + loginCount + ", date=" + date + ", entity=" + entity + "]";
 	}
+
+//	@Override
+//	public String toString() {
+//		return "PersonalInfoEntity [personId=" + personId + ", name=" + name + ", mobileNumber=" + mobileNumber
+//				+ ", address=" + address + ", age=" + age + ", state=" + state + ", emailId=" + emailId + ", date="
+//				+ date + ", entity=" + entity + "]";
+//	}
 
 	
 	

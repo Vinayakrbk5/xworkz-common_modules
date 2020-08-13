@@ -52,7 +52,6 @@ public class TempleDAOImpl implements TempleDAO {
 			return list1;
 		} catch (Exception e) {
 			logger.error("Something went wrong in DAOImpl", e);
-			e.printStackTrace();
 		} finally {
 			session.close();
 		}
@@ -178,8 +177,6 @@ public class TempleDAOImpl implements TempleDAO {
 		session.beginTransaction();
 		try {
 			logger.info("Start : Session");
-//			String hqlQuery = "select person from PersonalInfoEntity person where emailId=:email and password=:pass";
-//			Query query = session.createQuery(hqlQuery);
 			Query query = session.getNamedQuery("fetchDetailsByEmailAndPassword");
 			query.setParameter("email", email);
 			query.setParameter("pass", password);
@@ -250,6 +247,78 @@ public class TempleDAOImpl implements TempleDAO {
 		} catch (Exception e) {
 			session.getTransaction().rollback();
 			logger.error("Something went wrong in updatePasswordByEmailId() in DAOImpl", e);
+		} finally {
+			session.close();
+		}
+
+	}
+
+	@Override
+	public PersonalInfoEntity fetchByEmail(String email) {
+		logger.info("Invoked fetchByEmail() from DAOImpl");
+		logger.info("Start : Processing fetchByEmail()");
+		Session session = factory.openSession();
+		PersonalInfoEntity pEntity = new PersonalInfoEntity();
+		try {
+//			String hqlQuery = "select personal from PersonalInfoEntity personal where emailId=:email";
+			Query query = session.getNamedQuery("fetchByEmail");
+			query.setParameter("email", email);
+			pEntity = (PersonalInfoEntity) query.uniqueResult();
+			logger.info("End : Processing fetchByEmail()");
+		} catch (Exception e) {
+			logger.error("Something went wrong in fetchByEmail() method in DAOImpl");
+		} finally {
+			session.close();
+		}
+		return pEntity;
+
+	}
+
+	@Override
+	public int fetchLoginCountByEmail(String email) {
+		logger.info("Invoked fetchLoginCountByEmail() method from DAOImpl");
+		logger.info("Start : Processing fetchLoginCountByEmail() from DAOImpl");
+		int count = 10;
+		Session session = factory.openSession();
+		try {
+//			String hqlQuery = "select loginCount from PersonalInfoEntity where emailId=:email";
+			Query query = session.getNamedQuery("fetchLoginCountByEmail");
+			query.setParameter("email", email);
+			count = (int) query.uniqueResult();
+
+			logger.info("End : Processing fetchLoginCountByEmail() from DAOImpl");
+
+		} catch (Exception e) {
+			logger.error("Something went wrong in DAOImpl",e);
+		} finally {
+			session.close();
+		}
+		return count;
+	}
+
+	@Override
+	public void updateLoginCountByEmail(String email, Integer count) {
+		logger.info("Invoked updateLoginCountByEmail() method from DAOImpl");
+		logger.info("Start : processing updateLoginCountByEmail() in DAOImpl");
+		Session session = factory.openSession();
+		try {
+			session.beginTransaction();
+//			String hqlQuery = "update PersonalInfoEntity set loginCount=:count where emailId=:email";
+			Query query = session.getNamedQuery("updateLoginCountByEmail");
+			query.setParameter("email", email);
+			query.setParameter("count", count);
+			int res = query.executeUpdate();
+			session.getTransaction().commit();
+			if (res > 0) {
+				logger.info("LoginCount is updated");
+			} else {
+				logger.info("failed to update logincount");
+			}
+
+			logger.info("End : processing updateLoginCountByEmail() in DAOImpl");
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			logger.error("Something went wrong in DAOImpl",e);
 		} finally {
 			session.close();
 		}

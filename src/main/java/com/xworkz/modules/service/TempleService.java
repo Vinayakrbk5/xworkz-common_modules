@@ -4,6 +4,7 @@ import java.util.List;
 
 import main.java.com.xworkz.modules.dto.TempleDTO;
 import main.java.com.xworkz.modules.dto.TempleRegistrationDTO;
+import main.java.com.xworkz.modules.entity.PersonalInfoEntity;
 
 
 public interface TempleService {
@@ -24,9 +25,15 @@ public interface TempleService {
 	
 	public TempleRegistrationDTO validateAndGetVisitDetailsByEmail(String email);
 	
-	public boolean validateAndfetchDetailsByEmailAndPasswod(String email,String password);
+	public String validateAndfetchDetailsByEmailAndPasswod(String email,String password);
 	
 	public Boolean validateAndFetchPersonalDetailsByEmail(String email);
 	
 	public void validateAndUpdatePasswordByEmail(String password,String email);
+	
+	public String validateAndFetchByEmail(String email);
+	
+	public int validateAndFetchLoginCountByEmail(String email);
+	
+	public void validateAndUpdateLoginCountByEmail(String email,Integer count);
 }
