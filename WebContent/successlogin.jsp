@@ -27,5 +27,13 @@
 <div class="container">
 <h2>You have Logged in successfully</h2>
 </div>
+
+<form action="Book.jsp">
+<button type="submit">Book</button>
+</form>
+
+<form action="">
+<button type="submit">Search</button>
+</form>
 </body>
 </html>

@@ -3,6 +3,7 @@
   <display-name>common-modules</display-name>
   <welcome-file-list>
     <welcome-file>/onLanding.do</welcome-file>
+    <welcome-file>/onBooking.do</welcome-file>
   </welcome-file-list>
   
   <servlet>

@@ -1,6 +1,7 @@
 package main.java.com.xworkz.modules.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import main.java.com.xworkz.modules.converter.ExcelToDTOConverter;
 import main.java.com.xworkz.modules.dao.TempleDAO;
 import main.java.com.xworkz.modules.dataencryptanddecrypt.EncryptAndDecryptData;
+import main.java.com.xworkz.modules.datechecking.CalculateTotalHours;
 import main.java.com.xworkz.modules.dto.TempleDTO;
 import main.java.com.xworkz.modules.dto.TempleRegistrationDTO;
 import main.java.com.xworkz.modules.entity.PersonalInfoEntity;
@@ -31,9 +33,12 @@ public class TempleServiceImpl implements TempleService {
 
 	@Autowired
 	private EncryptAndDecryptData encAndDec;
-	
+
 	@Autowired
 	private RandomPasswordGenerator generator;
+	
+	@Autowired
+	private CalculateTotalHours totalHour;
 
 	@Override
 	public List<TempleDTO> validateAndFetchByType(String type) {
@@ -59,21 +64,24 @@ public class TempleServiceImpl implements TempleService {
 	public boolean validateAndSave(TempleRegistrationDTO dto) {
 		try {
 			logger.info("Start : validateAndSave() method in ServiceImpl");
-
-			long emailCount = 0;// validateAndFetchEmailCount(dto.getEmailId());
+			Date newDate = new Date();
+			long emailCount = validateAndFetchEmailCount(dto.getEmailId());
 			long phoneNumberCount = validateAndFetchPhoneNumberCount(dto.getMobileNumber());
 
 			if (emailCount == 0 && phoneNumberCount == 0) {
 				PersonalInfoEntity personEntity = new PersonalInfoEntity();
 				VisitingInfoEntity visitingEntity = new VisitingInfoEntity();
+				List<VisitingInfoEntity> list=new ArrayList<>();
 				BeanUtils.copyProperties(dto, personEntity);
 				BeanUtils.copyProperties(dto, visitingEntity);
+				list.add(visitingEntity);
 				logger.info("Person Entity :" + personEntity);
 				personEntity.setLoginCount(0);
+				personEntity.setLoginDate(newDate);
 				logger.info("Visiting entity :" + visitingEntity);
-				personEntity.setEntity(visitingEntity);
+				personEntity.setEntity(list);
 				visitingEntity.setPersonEntity(personEntity);
-				dao.save(personEntity, visitingEntity);
+				dao.save(personEntity, list.get(0));
 				logger.info("Now going to send details to email");
 				eService.sendRegisterSuccessEmail(dto);
 				logger.info("Sending to email is success");
@@ -98,11 +106,13 @@ public class TempleServiceImpl implements TempleService {
 			for (TempleRegistrationDTO dto : list) {
 				PersonalInfoEntity personEntity = new PersonalInfoEntity();
 				VisitingInfoEntity visitingEntity = new VisitingInfoEntity();
+				List<VisitingInfoEntity> list1=new ArrayList<>();
 				BeanUtils.copyProperties(dto, personEntity);
 				BeanUtils.copyProperties(dto, visitingEntity);
-				personEntity.setEntity(visitingEntity);
+				list1.add(visitingEntity);
+				personEntity.setEntity(list1);
 				visitingEntity.setPersonEntity(personEntity);
-				dao.save(visitingEntity, personEntity);
+				dao.save(list1.get(0), personEntity);
 			}
 		} catch (Exception e) {
 			logger.error("Something went wrong in validateAndSave(list) method in ServiceImpl", e);
@@ -218,44 +228,51 @@ public class TempleServiceImpl implements TempleService {
 
 	@Override
 	public String validateAndfetchDetailsByEmailAndPasswod(String email, String password) {
-		int count = 0;
+		int count = 0, reset = 0;
 		String valid = null;
 		try {
-			PersonalInfoEntity pEntity = new PersonalInfoEntity();
-			PersonalInfoEntity pEntity2 = new PersonalInfoEntity();
+			PersonalInfoEntity pEntity = new PersonalInfoEntity();   // creating object of PersonalInfoEntity class
+			
 			if (Objects.nonNull(email) && !email.isEmpty() && Objects.nonNull(password) && !password.isEmpty()) {
 				logger.info("Both password and email are valid");
-				String encPassword = encAndDec.encryptData(password);
-				logger.info("Password is : "+password);
-				logger.info("Encrypted password is : "+encPassword);
-				pEntity = dao.fetchPersonalDetailsByEmail(email);
+				String encPassword = encAndDec.encryptData(password);  // getting encrypted password for a given password
+				logger.info("Password is : " + password);
+				logger.info("Encrypted password is : " + encPassword);
+				pEntity = dao.fetchPersonalDetailsByEmail(email);  //  fetching personal details by Email
+				
 				if (pEntity != null) {
-					count = validateAndFetchLoginCountByEmail(email);
-					if (count < 3) {
-						pEntity2 = dao.fetchDetailsByEmailAndPassword(email, encPassword);
-						if (pEntity2 != null) {
-							valid="You have loggedIn Successfully";
-							logger.info("Object is not null");
-						} else {
-							valid="You have entered wrong password";
-							logger.info("Object is null");
-							count = count + 1;
-							validateAndUpdateLoginCountByEmail(email, count);
+					count = validateAndFetchLoginCountByEmail(email);  // fetching loginCount from DB
+					Date getDate = new Date();
+					getDate = dao.fetchDateByEmail(email);    //  fetching login date and time saving into getDate
+					Date curDate = new Date();  // this is current Date
 
-						}
-					} else {
-						valid="you have entered wrong password more than 3 times and your account is locked, so go for reset password";
-						logger.info("you have entered worng password more than 3 times and you cannot login,"
-								+ "so go for password reset");
-
+//					int hourDiff = (curDate.getDate() - 1) * 24 + curDate.getHours()  // calculating total hour difference between
+//					- ((getDate.getDate() - 1) * 24 + getDate.getHours()); 			  // curdate and getdate
+					
+					int hourDiff=totalHour.retunTotalHour(curDate)-totalHour.retunTotalHour(getDate);
+					
+					if (hourDiff >= 24) {
+						validateAndUpdateLoginCountByEmail(email, reset);        // resetting count to '0' in DB
+						valid = returnLoginStatusByEmailAndPassword(email, encPassword, count);       // returning login status
+																								 
+						dao.updateDateByEmail(email, curDate);         // resetting date to current date in DB
+					} 
+					else if (hourDiff < 24 && count < 3) {
+						valid = returnLoginStatusByEmailAndPassword(email, encPassword, count);     // returning login status
+					} 
+					else {
+						logger.info(
+								"Due to 3 wrong attempts, Your account has been locked, so try after 24 hours or go for password reset");
+						valid = "Due to wrong attempts, Your account has been locked, so try after 24 hours or go for password reset";
+						dao.updateDateByEmail(email, curDate);       // resetting date to current date in DB
 					}
 				} else {
-					valid="You have entered wrong email";
+					valid = "You have entered wrong email";
 					logger.info("Wrong email");
 				}
 
 			} else {
-				valid="You have not entered email or password";
+				valid = "You have not entered email or password";
 				logger.info("not entered email or password");
 			}
 		} catch (Exception e) {
@@ -271,7 +288,7 @@ public class TempleServiceImpl implements TempleService {
 		PersonalInfoEntity pEntity = new PersonalInfoEntity();
 		boolean valid = false;
 		try {
-			pEntity = dao.fetchPersonalDetailsByEmail(email);
+			pEntity = dao.fetchPersonalDetailsByEmail(email);  //  fetching Personal Information by email
 			if (Objects.nonNull(pEntity) && pEntity.getPassword() == null) {
 				logger.info("Object is not null or password doesnot exists");
 				valid = true;
@@ -293,9 +310,9 @@ public class TempleServiceImpl implements TempleService {
 				if (password != null && !password.isEmpty()) {
 					logger.info("Password is not null");
 					logger.info("Password before Encryption : " + password);
-					String encPassword = encAndDec.encryptData(password);
+					String encPassword = encAndDec.encryptData(password);  //  getting encrypted password for a given password
 					logger.info("Encrypted password : " + encPassword);
-					dao.updatePasswordByEmailId(encPassword, email);
+					dao.updatePasswordByEmailId(encPassword, email);  // updating password by email
 				} else {
 					logger.info("Password is null");
 				}
@@ -316,6 +333,7 @@ public class TempleServiceImpl implements TempleService {
 		logger.info("Start : processing validateAndFetchByEmail() in Service Impl");
 		String valid = null;
 		int count = 0;
+		Date curDate = new Date();
 		try {
 			if (Objects.nonNull(email) && !email.isEmpty()) {
 				logger.info("Email is valid");
@@ -323,15 +341,17 @@ public class TempleServiceImpl implements TempleService {
 				if (Objects.nonNull(pEntiy)) {
 					logger.info("Object is not null");
 					if (pEntiy.getPassword() != null) {
-						//generating new password
-						String newPassword=generator.generatePassword(8);
-						logger.info("New Password : "+newPassword);
-						//updating password
+						// generating new password
+						String newPassword = generator.generatePassword(8);
+						logger.info("New Password : " + newPassword);
+						// updating password
 						validateAndUpdatePasswordByEmail(newPassword, email);
-						//updating login count
+						// updating login count
 						validateAndUpdateLoginCountByEmail(email, count);
+						// updating Date means setting date to current date after resetting password
+						dao.updateDateByEmail(email, curDate);
 						valid = "password is resetted successfully and is sent to " + email;
-						//sending reset password to an email
+						// sending reset password to an email
 						eService.sendingNewPasswordToEmail(newPassword, email);
 						logger.info("Password already exists, it is resetted and sent to email");
 					} else {
@@ -347,10 +367,11 @@ public class TempleServiceImpl implements TempleService {
 				valid = "You have not entered an Email";
 				logger.info("Email is not valid");
 			}
-			logger.info("End : processing validateAndFetchByEmail() in Service Impl");;
+			logger.info("End : processing validateAndFetchByEmail() in Service Impl");
+			;
 
 		} catch (Exception e) {
-			logger.error("Something went wrong in validateAndFetchByEmail() method in ServiceImpl",e);
+			logger.error("Something went wrong in validateAndFetchByEmail() method in ServiceImpl", e);
 		}
 		return valid;
 
@@ -373,7 +394,7 @@ public class TempleServiceImpl implements TempleService {
 			logger.info("End : processing validateAndFetchLoginCountByEmail in ServiceImpl");
 
 		} catch (Exception e) {
-			logger.error("Something went wrongh in validateAndFetchLoginCountByEmail() method in ServiceImpl",e);
+			logger.error("Something went wrongh in validateAndFetchLoginCountByEmail() method in ServiceImpl", e);
 		}
 		return count;
 	}
@@ -390,10 +411,42 @@ public class TempleServiceImpl implements TempleService {
 			} else {
 				logger.info("Count is not valid");
 			}
-			logger.info("End : processing validateAndUpdateLoginCountByEmail() in ServiceImpl");;
+			logger.info("End : processing validateAndUpdateLoginCountByEmail() in ServiceImpl");
+			;
 		} catch (Exception e) {
-			logger.error("Something went wrong in validateAndUpdateLoginCountByEmail() method in ServiceImpl",e);
+			logger.error("Something went wrong in validateAndUpdateLoginCountByEmail() method in ServiceImpl", e);
 		}
+
+	}
+
+	@Override
+	public String returnLoginStatusByEmailAndPassword(String email, String encPassword, int count) {
+		String name = null;
+		try {
+			logger.info("Invoked calculateResetTime() method from ServiceImpl");
+			logger.info("Start : processing validateAndUpdateLoginCountByEmail() in ServiceImpl");
+			if (Objects.nonNull(email) && !email.isEmpty() && Objects.nonNull(encPassword) && !encPassword.isEmpty()
+					&& count >= 0) {
+				logger.info("Email, encPassword and count are valid");
+				PersonalInfoEntity pEntity2 = new PersonalInfoEntity();
+				pEntity2 = dao.fetchDetailsByEmailAndPassword(email, encPassword);
+				if (pEntity2 != null) {
+					name = "You have loggedIn Successfully";
+					logger.info("Object is not null");
+				} else {
+					name = "You have entered wrong password";
+					logger.info("Object is null");
+					count = count + 1;
+					validateAndUpdateLoginCountByEmail(email, count);
+				}
+				logger.info("End : processing validateAndUpdateLoginCountByEmail() in ServiceImpl");
+			} else {
+				logger.info("Email, encPassword and count are invalid");
+			}
+		} catch (Exception e) {
+			logger.error("Something went wrong in calculateResetTime() method from ServiceImpl", e);
+		}
+		return name;
 
 	}
 

@@ -36,4 +36,7 @@ public interface TempleService {
 	public int validateAndFetchLoginCountByEmail(String email);
 	
 	public void validateAndUpdateLoginCountByEmail(String email,Integer count);
+	
+	public String returnLoginStatusByEmailAndPassword(String email, String encPassword, int count);
+	
 }

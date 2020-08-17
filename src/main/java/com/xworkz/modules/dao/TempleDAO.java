@@ -1,5 +1,6 @@
 package main.java.com.xworkz.modules.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import main.java.com.xworkz.modules.dto.TempleDTO;
@@ -32,5 +33,9 @@ public interface TempleDAO {
 	public int fetchLoginCountByEmail(String email);
 	
 	public void updateLoginCountByEmail(String email, Integer count);
+	
+	public Date fetchDateByEmail(String email);
+	
+	public void updateDateByEmail(String email,Date curDate);
 
 }

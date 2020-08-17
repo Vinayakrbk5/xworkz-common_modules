@@ -1,6 +1,8 @@
 package main.java.com.xworkz.modules.entity;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -21,7 +24,9 @@ import javax.persistence.Table;
 	@NamedQuery(name="updatePasswordByEmailId",query = "update PersonalInfoEntity set password=:password where emailId=:email"),
 	@NamedQuery(name="fetchByEmail",query = "select personal from PersonalInfoEntity personal where emailId=:email"),
 	@NamedQuery(name="fetchLoginCountByEmail",query = "select loginCount from PersonalInfoEntity where emailId=:email"),
-	@NamedQuery(name="updateLoginCountByEmail",query = "update PersonalInfoEntity set loginCount=:count where emailId=:email")})
+	@NamedQuery(name="updateLoginCountByEmail",query = "update PersonalInfoEntity set loginCount=:count where emailId=:email"),
+	@NamedQuery(name="fetchDateByEmail", query = "select person.loginDate from PersonalInfoEntity person where emailId=:email"),
+	@NamedQuery(name="updateDateByEmail",query = "Update PersonalInfoEntity set loginDate=:date where emailId=:email")})
 public class PersonalInfoEntity implements Serializable{
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -44,11 +49,12 @@ public class PersonalInfoEntity implements Serializable{
 	private String password;
 	@Column(name="LOGIN_COUNT")
 	private Integer loginCount;
-	@Column(name="VISITING_DATE")
-	private String date;
 	
-	@OneToOne(mappedBy ="personEntity" )
-	private VisitingInfoEntity entity;
+	@Column(name="LOGIN_DATE")
+	private Date loginDate;
+	
+	@OneToMany(mappedBy ="personEntity" )
+	private List<VisitingInfoEntity> entity;
 	
 	public PersonalInfoEntity() {
 		// TODO Auto-generated constructor stub
@@ -125,27 +131,26 @@ public class PersonalInfoEntity implements Serializable{
 		this.password = password;
 	}
 
-	public String getDate() {
-		return date;
-	}
 
-	public void setDate(String date) {
-		this.date = date;
-	}
-
-	public VisitingInfoEntity getEntity() {
+	public List<VisitingInfoEntity> getEntity() {
 		return entity;
 	}
-
-	public void setEntity(VisitingInfoEntity entity) {
+	public void setEntity(List<VisitingInfoEntity> entity) {
 		this.entity = entity;
 	}
-
+	
+	public Date getLoginDate() {
+		return loginDate;
+	}
+	public void setLoginDate(Date loginDate) {
+		this.loginDate = loginDate;
+	}
+	
 	@Override
 	public String toString() {
 		return "PersonalInfoEntity [personId=" + personId + ", name=" + name + ", mobileNumber=" + mobileNumber
 				+ ", address=" + address + ", age=" + age + ", state=" + state + ", emailId=" + emailId + ", password="
-				+ password + ", loginCount=" + loginCount + ", date=" + date + ", entity=" + entity + "]";
+				+ password + ", loginCount=" + loginCount + ", entity=" + entity + "]";
 	}
 
 //	@Override

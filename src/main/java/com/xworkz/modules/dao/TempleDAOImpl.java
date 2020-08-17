@@ -1,6 +1,7 @@
 package main.java.com.xworkz.modules.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -323,6 +324,60 @@ public class TempleDAOImpl implements TempleDAO {
 			session.close();
 		}
 
+	}
+	
+	@Override
+	public Date fetchDateByEmail(String email) {
+		logger.info("Invoked fetchDateByEmail() method from DAOImpl");
+		logger.info("Start : processing fetchDateByEmail() in DAOImpl");
+		Session session=factory.openSession();
+		Date date=new Date();
+		try {
+			logger.info("Start : Session");
+//			String hqlQuery="select person.loginDate from PersonalInfoEntity person where emailId=:email";
+			Query query=session.getNamedQuery("fetchDateByEmail");
+			query.setParameter("email", email);
+			date=(Date) query.uniqueResult();
+			logger.info("End : Session");
+			logger.info("End : processing fetchDateByEmail() in DAOImpl");
+			return date;
+			
+		}catch (Exception e) {
+			logger.error("Something went wrong in fetchDateByEmail() method in DAOImpl",e); 
+		}finally {
+			session.close();
+		}
+		return null;
+	}
+	
+	@Override
+	public void updateDateByEmail(String email, Date curDate) {
+		Session session =factory.openSession();
+		int res=0;
+		try {
+			session.beginTransaction();
+//			String hqlQuery="Update PersonalInfoEntity set loginDate=:date where emailId=:email";
+			Query query=session.getNamedQuery("updateDateByEmail");
+			query.setParameter("date", curDate);
+			query.setParameter("email", email);
+			res=(int) query.executeUpdate();
+			session.getTransaction().commit();
+			if(res>0)
+			{
+				logger.info("Updated date");
+			}else
+			{
+				logger.info("fail to update");
+			}
+			
+			
+		}catch (Exception e) {
+			session.getTransaction().rollback();
+			logger.error("Something went wrong in updateDateByEmail() method in DAOImpl",e); 
+		}finally {
+			session.close();
+		}
+		
 	}
 
 }

@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -20,6 +21,8 @@ public class VisitingInfoEntity implements Serializable{
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="VISIT_ID")
 	private Integer visitId;
+	@Column(name="VISITING_DATE")
+	private String date;
 	@Column(name="NO_OF_PEOPLE")
 	private Double noOfPeople;
 	@Column(name="SPECIAL_ENTRY_TYPE")
@@ -31,7 +34,7 @@ public class VisitingInfoEntity implements Serializable{
 	@Column(name="POOJA_TYPE")
 	private String poojaType;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name="personId")
 	private PersonalInfoEntity personEntity;
 	
@@ -45,6 +48,13 @@ public class VisitingInfoEntity implements Serializable{
 
 	public void setVisitId(Integer visitId) {
 		this.visitId = visitId;
+	}
+	
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
 	}
 
 	public Double getNoOfPeople() {

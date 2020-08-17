@@ -2,7 +2,10 @@ package main.java.com.xworkz.modules.controller;
 
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
@@ -32,10 +35,12 @@ public class TempleController {
 	private RandomPasswordGenerator passwordGenerator;
 
 	private Logger logger = Logger.getLogger(TempleController.class);
-
+	
 	public TempleController() {
 		logger.info("Created " + this.getClass().getSimpleName());
 	}
+	
+	
 
 	@PostConstruct
 	public void init() {
@@ -132,7 +137,13 @@ public class TempleController {
 	public String loginCheck(@RequestParam String email, @RequestParam String pwd, Model model) {
 		try {
 			String check = null;
+			String equal="You have loggedIn Successfully";
 			check = service.validateAndfetchDetailsByEmailAndPasswod(email, pwd);
+			if(check==equal)
+			{
+				model.addAttribute("email", email);
+				return "LoadList";
+			}
 			model.addAttribute("logMessage", check);
 
 		} catch (Exception e) {
